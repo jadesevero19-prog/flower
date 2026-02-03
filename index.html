@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Garden of You</title>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+            background: #050505;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        canvas {
+            filter: drop-shadow(0 0 10px rgba(255, 105, 180, 0.3));
+        }
+    </style>
+</head>
+<body>
+    <canvas id="canvas"></canvas>
+
+<script>
+const canvas = document.getElementById('canvas');
+const ctx = canvas.getContext('2d');
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+
+function drawFlower(x, y, size, angle) {
+    if (size < 2) return;
+
+    // Draw branch
+    ctx.beginPath();
+    ctx.moveTo(x, y);
+    const x2 = x + Math.cos(angle) * size * 10;
+    const y2 = y + Math.sin(angle) * size * 10;
+    
+    ctx.strokeStyle = `hsl(${140 + size * 5}, 70%, ${20 + size * 5}%)`;
+    ctx.lineWidth = size;
+    ctx.lineTo(x2, y2);
+    ctx.stroke();
+
+    // Randomize growth
+    const children = Math.random() > 0.8 ? 3 : 2;
+    
+    setTimeout(() => {
+        for (let i = 0; i < children; i++) {
+            drawFlower(
+                x2, y2, 
+                size * 0.75, 
+                angle + (Math.random() - 0.5) * 1.5
+            );
+        }
+        
+        // If it's the tip, draw a petal
+        if (size < 4) {
+            ctx.beginPath();
+            ctx.arc(x2, y2, 5, 0, Math.PI * 2);
+            ctx.fillStyle = `hsl(${330 + Math.random() * 30}, 80%, 70%)`;
+            ctx.fill();
+        }
+    }, 100);
+}
+
+// Start growing from the bottom center
+drawFlower(canvas.width / 2, canvas.height, 12, -Math.PI / 2);
+
+window.addEventListener('resize', () => {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+});
+</script>
+</body>
+</html>
